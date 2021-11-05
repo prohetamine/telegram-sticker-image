@@ -7,6 +7,11 @@ const defaultInput = path.join(__dirname, 'input')
 
 const ignoreFiles = ['.DS_Store']
 
+const size = {
+  width: 512,
+  height: 512
+}
+
 const checkOrCreateFolder = path => {
   try {
     const stat = fs.lstatSync(path)
@@ -62,17 +67,17 @@ const checkOrCreateFolder = path => {
 
     let resize = '100%'
 
-    if (width < 510 || height < 510) {
+    if (width < size.width || height < size.height) {
       if (width > height) {
-        resize = parseInt(100 * parseFloat(510 / width)) + '%'
+        resize = parseInt(100 * parseFloat(size.width / width)) + '%'
       } else {
-        resize = parseInt(100 * parseFloat(510 / height)) + '%'
+        resize = parseInt(100 * parseFloat(size.height / height)) + '%'
       }
     } else {
       if (width > height) {
-        resize = parseInt(100 / parseFloat(width / 510)) + '%'
+        resize = parseInt(100 / parseFloat(width / size.width)) + '%'
       } else {
-        resize = parseInt(100 / parseFloat(height / 510)) + '%'
+        resize = parseInt(100 / parseFloat(height / size.height)) + '%'
       }
     }
 
@@ -81,7 +86,7 @@ const checkOrCreateFolder = path => {
     try {
       execSync(`convert "${path.join(output, file)}" -resize ${resize} "${path.join(output, file)}"`)
       console.log('RESIZE image to: ' + resize, progress)
-      execSync(`convert -size 512x512 xc:transparent "${path.join(output, file)}" -gravity center -composite "${path.join(output, file)}"`)
+      execSync(`convert -size ${size.width}x${size.height} xc:transparent "${path.join(output, file)}" -gravity center -composite "${path.join(output, file)}"`)
       console.log('CREATE transparent background to: ' + file, progress)
     } catch (e) {
       console.log('ERROR resize and create transparent background for: ' + file, progress)
